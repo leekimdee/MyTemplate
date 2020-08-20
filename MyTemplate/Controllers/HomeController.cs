@@ -22,28 +22,6 @@ namespace MyTemplate.Controllers
             List<NhanSu> nhansues = new List<NhanSu>();
             string strSql = "SELECT TOP 20 HoVaTenDem, Ten, GioiTinh, NgaySinh, PHONGBAN.TenPhongBan as PhongBan, DANTOC.TenDanToc as DanToc, TONGIAO.TenTonGiao as TonGiao FROM NHANSU inner join DANTOC on NHANSU.DanTocID=DANTOC.Id inner join TONGIAO on NHANSU.TonGiaoID=TONGIAO.Id inner join PHONGBAN on NHANSU.PhongBanId=PHONGBAN.Id";
 
-            //SqlDataReader dtRd;
-            //dtRd = cn.GetDataReader(strSql);
-            //if (dtRd.HasRows)
-            //{
-            //    while (dtRd.Read())
-            //    {
-            //        NhanSu ns = new NhanSu();
-            //        ns.HoTen = dtRd["HoVaTenDem"].ToString() + " " + dtRd["Ten"].ToString();
-            //        ns.GioiTinh = dtRd["GioiTinh"].ToString() == "1" ? "Nam" : "Nữ";
-            //        if (dtRd["NgaySinh"] != null && dtRd["NgaySinh"].ToString() != "")
-            //            ns.NgaySinh = DateTime.Parse(dtRd["NgaySinh"].ToString()).ToShortDateString();
-            //        else
-            //            ns.NgaySinh = "";
-            //        ns.DanToc = dtRd["TenDanToc"].ToString();
-            //        ns.TonGao = dtRd["TenTonGiao"].ToString();
-            //        ns.PhongBan = dtRd["TenPhongBan"].ToString();
-
-            //        nhansues.Add(ns);
-            //    }
-            //}
-            //dtRd.Close();
-
             using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["QtDbConStr"].ConnectionString))
             {
                 nhansues = db.Query<NhanSu>(strSql).ToList();
