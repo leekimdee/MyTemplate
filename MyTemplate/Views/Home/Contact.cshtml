@@ -1,0 +1,45 @@
+﻿@*@model List<MyTemplate.Models.Nguoi>*@
+@using PagedList.Mvc;
+@model PagedList.IPagedList<MyTemplate.Models.Nguoi>
+@{
+    ViewBag.Title = "CONTACT";
+}
+
+<div class="row">
+
+    <div class="col-md-12">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">STT</th>
+                    <th scope="col">Họ và Tên</th>
+                    <th scope="col">Ngày Sinh</th>
+                    <th scope="col">Giới tính</th>
+                    <th scope="col">Phòng Ban</th>
+                    <th scope="col">Chức Vụ</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int count = 0;
+                    foreach (var nguoi in Model)
+                    {
+                        count++;
+                        <tr>
+                            <th scope="row">@count</th>
+                            <td>@(nguoi.HoTen)</td>
+                            <td>@nguoi.NgaySinh.ToString("dd/MM/yyyy")</td>
+                            <td>@(nguoi.GioiTinh == "True" ? "Nam" : "Nữ")</td>
+                            <td>@nguoi.PhongBan</td>
+                            <td>@nguoi.ChucVu</td>
+                        </tr>
+                    }
+                }
+
+
+
+            </tbody>
+        </table>
+        @Html.PagedListPager(Model, page => Url.Action("Contact", new { page }), PagedListRenderOptions.ClassicPlusFirstAndLast)
+    </div>
+</div>

@@ -1,0 +1,76 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Gallery";
+}
+
+<link href="~/Assets/libs/lightgallery/dist/css/lightgallery.css" rel="stylesheet" />
+<style type="text/css">
+    .img-thumb {
+        width: 180px;
+        height: 126px;
+        margin:1px;
+    }
+
+    #lightgallery {
+        margin-top: 15px;
+    }
+</style>
+
+@section scripts{
+    <script src="~/Assets/libs/lightgallery/dist/js/lightgallery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js"></script>
+    <script src="~/Assets/libs/lightgallery/modules/lg-fullscreen.min.js"></script>
+    <script src="~/Assets/libs/lightgallery/modules/lg-thumbnail.min.js"></script>
+    <script type="text/javascript">
+        var $lg = $('#lightgallery');
+
+        LoadImage($("#ImageAlbumId").val());
+
+        $("#ImageAlbumId").change(function () {
+            $lg.data('lightGallery').destroy(true);
+            LoadImage($(this).val());
+        });
+
+        function LoadImage(albumId) {
+            $.ajax({
+                type: "POST",
+                datatype: JSON,
+                url: '@(Url.Action("GetImageByAlbumId", "Image"))',
+                data: { albumId: albumId },
+                success: function (result) {
+                    $("#lightgallery").html("");
+                    for (var i = 0; i < result.length; i++) {
+                        $("#lightgallery").append("<a href='" + result[i].ImageUrl + "'><img src='" + result[i].ImageUrl + "' class='img-thumb' /></a>");
+                    }
+                    
+                    $lg.lightGallery({ thumbnail: true });
+                },
+                error: function (a, textStatus, errorThrown) {
+                    alert("Lỗi: " + errorThrown);
+                }
+            });
+        }
+    </script>
+}
+
+<h2>Gallery</h2>
+<hr />
+<form id="formGallery" class="form-horizontal">
+    <div class="row">
+        <div class="col-md-1">
+            <label class="control-label">
+                Album
+            </label>
+        </div>
+        <div class="col-md-11">
+            @Html.DropDownList("ImageAlbumId", new SelectList(ViewBag.ImageAlbums, "Id", "Title", ""), new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="row">
+        <div id="lightgallery">
+
+        </div>
+    </div>
+</form>

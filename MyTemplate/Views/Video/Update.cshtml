@@ -1,0 +1,41 @@
+﻿@model MyTemplate.Models.Video
+@{
+    ViewBag.Title = "SỬA HÌNH VIDEO";
+}
+
+@section scripts{
+    <script type="text/javascript">
+    function btnHuy_Click() {
+        location.href = "/Video/Index";
+    }
+    </script>
+}
+
+
+@using (Html.BeginForm("Update", "Video", FormMethod.Post))
+{
+    <div class="row">
+        <div class="form-group col-md-12">
+            <label class="control-label">
+                Tiêu đề video
+            </label>
+            @Html.TextBoxFor(x => x.Title, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-12">
+            <label class="control-label">
+                Đường dẫn video
+            </label>
+            @Html.TextBoxFor(x => x.VideoUrl, new { @class = "form-control", @required = "required", @oninvalid = "this.setCustomValidity('Đường dẫn Video không được để trống')", @oninput = "this.setCustomValidity('')" })
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <button type="button" id="btnHuy" onclick="btnHuy_Click()" class="btn btn-default">Hủy</button>
+            <button type="submit" id="btnLuu" class="btn btn-success">Lưu</button>
+        </div>
+    </div>
+}

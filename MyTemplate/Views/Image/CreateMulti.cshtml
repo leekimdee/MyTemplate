@@ -1,0 +1,73 @@
+﻿
+@{
+                /**/
+
+                ViewBag.Title = "THÊM NHIỀU HÌNH ẢNH";
+}
+
+@section scripts{
+    <script type="text/javascript">
+    function btnHuy_Click() {
+        location.href = "../Image/Index";
+    }
+
+    function btnOpenUploadWindow_Click() {
+        $('#divPopup').modal('show');
+    }
+
+    function btnUploadImage_Click() {
+
+        var files = $("#file").get(0).files;
+        var fileData = new FormData();
+
+        if (files.length == 0) return false;
+
+        for (var i = 0; i < files.length; i++) {
+            fileData.append("file", files[i]);
+        }
+
+        $.ajax({
+            type: "POST",
+            url: '@(Url.Action("ProcessUploadImage", "Image"))',
+            contentType: false, // Not to set any content header
+            processData: false,
+            data: fileData,
+            success: function (result) {
+                $("#txtImageUrl").val(result);
+                $('#divPopup').modal('hide');
+            },
+            error: function (a, textStatus, errorThrown) {
+
+            }
+        });
+    }
+    </script>
+}
+
+@using (Html.BeginForm("CreateMulti", "Image", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="row">
+        <div class="form-group col-md-12">
+            <label class="control-label">
+                Album
+            </label>
+            @Html.DropDownList("ImageAlbumId", new SelectList(ViewBag.ImageAlbums, "Id", "Title", ""), new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-12">
+            <label class="control-label">
+                Chọn nhiều hình
+            </label>
+            <input type="file" id="file" name="files" multiple/>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <button type="button" id="btnHuy" onclick="btnHuy_Click()" class="btn btn-default">Hủy</button>
+            <button type="submit" id="btnLuu" class="btn btn-success">Lưu</button>
+        </div>
+    </div>
+}

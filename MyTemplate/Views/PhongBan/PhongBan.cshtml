@@ -1,0 +1,279 @@
+﻿
+@model List<MyTemplate.Models.PhongBan>
+@{
+    ViewBag.Title = "DANH SÁCH PHÒNG BAN";
+    HtmlHelper.UnobtrusiveJavaScriptEnabled = false;
+}
+
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+
+<script type="text/javascript">
+    var phongbanId;
+    function btnEdit_Click(e, Id) {
+        phongbanId = Id;
+        GetInfo();
+    }
+
+    function btnAddNew_Click() {
+        phongbanId = 0;
+        $("#TitlePopup").html("<h2>THÊM MỚI</h2>");
+        $('#divPopup').modal('show');
+    }
+
+    function btnDelete_Click(e, Id) {
+
+        bootbox.confirm("Bạn có muốn xóa?", function (result) {
+            if (result) {
+                //alert(Id);
+                $.ajax({
+                    type: "POST",
+                    url: '@(Url.Action("Delete", "PhongBan"))',
+                    data: {
+                        Id: Id
+                    },
+                    success: function (result) {
+                        switch (result) {
+                            case '0':
+                                    location.reload();
+                                break;
+                            default:
+                                notify("error", result);
+                        }
+                    },
+                    error: function (a, textStatus, errorThrown) {
+                        notify("error", errorThrown);
+                    }
+        });
+            }
+        });
+    }
+
+    function btnSubmit_Click() {
+        //if (phongbanId != 0) {
+        //    Update();
+        //}
+        //else {
+        //    AddNew();
+        //}
+        //return false;
+    }
+
+    function AddNew() {
+        var info = {
+            Id: 0,
+            TenPhongBan: $("#tenphong").val().trim(),
+            KiHieu: $("#kihieu").val().trim(),
+            SapXepPhong: $("#thutusapxep").val().trim()
+        }
+
+        $.ajax({
+        type: "POST",
+            url: '@(Url.Action("Create", "PhongBan"))',
+            data: JSON.stringify(info),
+            contentType: 'application/json; charset=utf-8',
+            success: function (result) {
+                switch (result) {
+                    case '0':
+                        $('#divPopup').modal('hide');
+                        location.reload();
+
+                        //notify("success", "Cập nhật thành công!");
+                        break;
+                    default:
+                        $('#divPopup').modal('hide');
+                        notify("error", result);
+                }
+            },
+            error: function (a, textStatus, errorThrown) {
+                notify("error", errorThrown);
+            }
+        });
+    }
+
+    function Update() {
+        var info = {
+            Id: phongbanId,
+            TenPhongBan: $("#tenphong").val().trim(),
+            KiHieu: $("#kihieu").val().trim(),
+            SapXepPhong: $("#thutusapxep").val().trim()
+        }
+
+        $.ajax({
+        type: "POST",
+            url: '@(Url.Action("Update", "PhongBan"))',
+            data: JSON.stringify(info),
+            contentType: 'application/json; charset=utf-8',
+            success: function (result) {
+                switch (result) {
+                    case '0':
+                        $('#divPopup').modal('hide');
+                        location.reload();
+
+                        //notify("success", "Cập nhật thành công!");
+                        break;
+                    default:
+                        $('#divPopup').modal('hide');
+                        notify("error", result);
+                        //alert(result);
+                }
+            },
+            error: function (a, textStatus, errorThrown) {
+                notify("error", errorThrown);
+                //alert("Lỗi: " + errorThrown);
+                //document.getElementById("btnLuu").disabled = false;
+            }
+        });
+    }
+
+    function GetInfo() {
+        $.ajax({
+            type: "POST",
+            datatype: JSON,
+            url: '@(Url.Action("GetItemById", "PhongBan"))',
+            data: { PhongBanId: phongbanId },
+            success: function (result) {
+
+                $("#tenphong").val(result["TenPhongBan"]);
+                $("#kihieu").val(result["KiHieu"]);
+                $("#thutusapxep").val(result["SapXepPhong"]);
+
+                $("#TitlePopup").html("<h2>SỬA THÔNG TIN</h2>");
+                $('#divPopup').modal('show');
+            },
+            error: function (a, textStatus, errorThrown) {
+                alert("Lỗi: " + errorThrown);
+            }
+        });
+     }
+
+    $("#divPopup").on('hide.bs.modal', function () {
+        $(".form-group").each(function () {
+            $(this).removeClass('has-success has-error');
+        });
+        $(".help-block").each(function () {
+            $(this).remove();
+        });
+    });
+
+        function notify(type, message) {
+            if (type == "error") {
+                $.notify({
+                    // options
+                    icon: 'glyphicon glyphicon-exclamation-sign',
+                    message: message
+                }, {
+                        // settings
+                        type: 'danger',
+                        placement: {
+                            from: "top",
+                            align: "right"
+                        }
+                    });
+            }
+            else {
+                $.notify({
+                    icon: 'glyphicon glyphicon-ok',
+                    message: message
+                }, {
+                        type: 'success',
+                        placement: {
+                            from: "top",
+                            align: "right"
+                        }
+                    });
+            }
+
+        }
+</script>
+
+    <script src="~/Scripts/custom-validator.js"></script>
+}
+
+<div class="row" style="margin-bottom:15px">
+    <div class="col-md-12">
+        <a href="#" onClick="btnAddNew_Click()"><span><i class="glyphicon glyphicon-plus"></i> Thêm Mới</span></a>
+    </div>
+</div>
+<div class="row">
+
+    <div class="col-md-12">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">STT</th>
+                    <th scope="col">Tên Phòng</th>
+                    <th scope="col">Kí Hiệu</th>
+                    <th scope="col">Thứ Tự Sắp Xếp</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    foreach (var pb in Model)
+                    {
+                        <tr>
+                            <th scope="row">@pb.stt</th>
+                            <td>@pb.TenPhongBan</td>
+                            <td>@pb.KiHieu</td>
+                            <td>@pb.SapXepPhong</td>
+                            <td><a onClick="btnEdit_Click(event, @pb.Id)"><span><i class='glyphicon glyphicon-edit'></i></span></a></td>
+                            <td><a onClick="btnDelete_Click(event, @pb.Id)"><span><i class='glyphicon glyphicon-trash'></i></span></a></td>
+                        </tr>
+                    }
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<form class="form-horizontal" id="PhongBanForm">
+    <div id="divPopup" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog vertical-align-center">
+            <div class="modal-content">
+                <div class="modal-header" style="">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                    </button>
+                    <span class="modal-title" id="TitlePopup"><b>SỬA THÔNG TIN</b></span>
+
+                </div>
+
+
+                <div id="divPopupBody" class="modal-body">
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label class="col-md-4 control-label" style="text-align:left">Tên phòng ban:</label>
+                            <div class="col-md-8">
+                                <input class="form-control" type="text" id="tenphong" name="tenphong" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label class="col-md-4 control-label" style="text-align:left">Kí hiệu:</label>
+                            <div class="col-md-8">
+                                <input class="form-control" type="text" id="kihieu" name="kihieu" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label class="col-md-4 control-label" style="text-align:left">Thứ tự sắp xếp:</label>
+                            <div class="col-md-8">
+                                <input class="form-control" type="text" id="thutusapxep" name="thutusapxep" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Hủy</button>
+                    <button type="submit" id="btnLuu" class="btn btn-primary">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

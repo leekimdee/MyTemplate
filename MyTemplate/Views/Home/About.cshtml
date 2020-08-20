@@ -1,0 +1,60 @@
+﻿@model IEnumerable<MyTemplate.Models.NhanSu>
+@{
+    ViewBag.Title = "DANH SÁCH NHÂN SỰ";
+}
+
+<div class="row">
+
+    <div class="col-md-12">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">STT</th>
+                    <th scope="col">Họ và Tên</th>
+                    <th scope="col">Ngày Sinh</th>
+                    <th scope="col">Giới tính</th>
+                    <th scope="col">Phòng Ban</th>
+                    <th scope="col">Dân Tộc</th>
+                    <th scope="col">Tôn Giáo</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int count = 0;
+                    foreach (var ns in Model)
+                    {
+                        count++;
+                        <tr>
+                            <th scope="row">@count</th>
+                            <td>@(ns.HoVaTenDem + " " + ns.Ten)</td>
+                            <td>@ns.NgaySinh.ToString("dd/MM/yyyy")</td>
+                            <td>@(ns.GioiTinh == "True" ? "Nam" : "Nữ")</td>
+                            <td>@ns.PhongBan</td>
+                            <td>@ns.DanToc</td>
+                            <td>@ns.TonGiao</td>
+                        </tr>
+                    }
+                }
+
+
+
+            </tbody>
+        </table>
+
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                @for (int i = 1; i <= ViewBag.PageCount; i++)
+                {
+                    @*<li class="page-item"><a class="page-link" href="@Url.Action("About", new { page = i })">@i</a></li>*@
+
+                    <li class="@(i == ViewBag.CurrentPage ? "page-item active" : "page-item")">
+                        <a class="page-link" href="@Url.Action("About", new { page = i })">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+
+
+
+</div>

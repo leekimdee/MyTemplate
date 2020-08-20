@@ -1,0 +1,132 @@
+﻿
+@{
+    ViewBag.Title = "DANH SÁCH NHÂN SỰ";
+}
+
+@*<link type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" />*@
+<link href="/Assets/datatables-plugins/dataTables.bootstrap.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/fixedheader/3.1.7/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+<link href="/Assets/datatables-responsive/dataTables.responsive.css" rel="stylesheet">
+
+@section scripts{
+    @*<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>*@
+    @*<script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>*@
+    @*<script src="/Scripts/jquery-3.3.1.min.js"></script>*@
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script src="/Assets/datatables-plugins/dataTables.bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedheader/3.1.7/js/dataTables.fixedHeader.min.js" type="text/javascript"></script>
+    <script src="/Assets/datatables-responsive/dataTables.responsive.js"></script>
+    <script src="~/Scripts/Datatables_Config.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function () {
+
+        //$('#danhsachnhansu').DataTable({
+        //    "ajax": "../Content/Files/arrays.txt"
+        //});
+        var lang_option = language();
+        $.ajax({
+                type: "POST",
+                url: '@(Url.Action("GetAll", "NhanSu"))',
+                contentType: 'application/json; charset=utf-8',
+                success: function (result) {
+                    var table = $('#danhsachnhansu').DataTable({
+                        data: result,
+                        columns: [
+                            { data: "HoVaTen", title: "Họ và Tên", width : "200px" },
+                            { data: "GioiTinh", title: "Giới Tính", width: "80px" },
+                            { data: "NgaySinh", title: "Ngày Sinh", width: "100px" },
+                            { data: "PhongBan", title: "Phòng Ban", width: "200px" },
+                            { data: "DanToc", title: "Dân Tộc", width: "110px" },
+                            { data: "TonGiao", title: "Tôn Giáo" },
+                            {
+                                data: "STT",
+                                searchable: false,
+                                sortable: false,
+                                render: function (data, type, full, meta) {
+                                    return "<a onClick='btnEdit_Click(event, " + data + ")'><span><i class='glyphicon glyphicon-edit'></i></span></a>";
+                                }
+                            },
+                            {
+                                data: "STT",
+                                searchable: false,
+                                sortable: false,
+                                render: function (data, type, full, meta) {
+                                    return '<a href="@Url.Action("Delete","NhanSu")?id=' + data + '" ><span><i class="glyphicon glyphicon-trash"></i></span></a>';
+                                }
+                            }
+                        ],
+                        language: lang_option,
+                        responsive: true
+                    });
+                    new $.fn.dataTable.FixedHeader(table);
+                },
+                error: function (a, textStatus, errorThrown) {
+                    alert("Lỗi: " + errorThrown);
+                }
+            });
+        });
+
+        function btnEdit_Click(e, Id) {
+
+            //$("#TitlePopup").text("Sửa Thông Tin");
+            $('#divPopup').modal('show');
+    }
+    </script>
+}
+
+<div class="row" style="margin-bottom:15px">
+    <div class="col-md-12">
+        <a href="@Url.Action("Create","NhanSu")"><span><i class="glyphicon glyphicon-plus"></i>Add New</span></a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+
+        <table id="danhsachnhansu" class="table table-striped table-bordered dt-head-center" style="width:100%"></table>
+
+    </div>
+</div>
+
+
+<form class="form-horizontal">
+    <div id="divPopup" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+        @*<div class="vertical-alignment-helper">*@
+        <div class="modal-dialog vertical-align-center">
+            <div class="modal-content">
+                <div class="modal-header" style="">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                    </button>
+                    <span class="modal-title" id="TitlePopup"><b>SỬA THÔNG TIN</b></span>
+
+                </div>
+
+
+                <div id="divPopupBody" class="modal-body">
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label class="col-md-4 control-label" style="text-align:left">Tên phòng ban:</label>
+                            <div class="col-md-8">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label class="col-md-4 control-label" style="text-align:left">Kí hiệu:</label>
+                            <div class="col-md-8">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Hủy</button>
+                    <button type="button" id="btnLuu" class="btn btn-primary">Lưu</button>
+                </div>
+            </div>
+        </div>
+        @*</div>*@
+    </div>
+</form>

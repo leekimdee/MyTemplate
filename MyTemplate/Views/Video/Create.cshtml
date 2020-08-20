@@ -1,0 +1,41 @@
+﻿@{
+    ViewBag.Title = "THÊM MỚI VIDEO";
+}
+
+@section scripts{
+    <script type="text/javascript">
+    function btnHuy_Click() {
+        location.href = "../Video/Index";
+    }    
+    </script>
+}
+
+@using (Html.BeginForm("Create", "Video", FormMethod.Post))
+{
+    <div class="row">
+        <div class="form-group col-md-12">
+            <label class="control-label">
+                Tiêu đề video
+            </label>
+            <input id="txtTitle" name="Title" class="form-control" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-12">
+            <label class="control-label">
+                Đường dẫn video
+            </label>
+            <input id="txtImageUrl" name="VideoUrl" class="form-control" required oninvalid="this.setCustomValidity('Đường dẫn video không được để trống')" oninput="this.setCustomValidity('')" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <button type="button" id="btnHuy" onclick="btnHuy_Click()" class="btn btn-default">Hủy</button>
+            <button type="submit" id="btnLuu" class="btn btn-success">Lưu</button>
+        </div>
+    </div>
+}
+
+

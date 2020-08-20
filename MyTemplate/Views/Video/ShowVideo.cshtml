@@ -1,0 +1,93 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "All Video";
+}
+
+<link href="~/Assets/libs/lightgallery/dist/css/lightgallery.css" rel="stylesheet" />
+<style type="text/css">
+    .poster-container {
+        position: relative;
+        display: inline-block;
+        margin: 15px;
+        width: 180px;
+        height: 166px;
+        overflow: hidden;
+        cursor: pointer;
+    }
+    .img-thumb {
+        width: 180px;
+        height: 126px;
+        transition: transform .5s, filter 1.5s ease-in-out;
+    }
+    .img-play-icon {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        cursor: pointer;
+    }
+    .poster-container:hover .img-thumb {
+        transform: scaleX(1.1);
+    }
+</style>
+
+@section scripts{
+    <script src="~/Assets/libs/lightgallery/dist/js/lightgallery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js"></script>
+    <script src="~/Assets/libs/lightgallery/modules/lg-video.min.js"></script>
+    <script src="~/Assets/libs/lightgallery/modules/lg-fullscreen.min.js"></script>
+    <script src="~/Assets/libs/lightgallery/modules/lg-thumbnail.min.js"></script>
+
+    <script type="text/javascript">
+        var $lg = $('#video-gallery');
+        //$('#video-gallery').lightGallery({
+        //    selector: '.poster-container'
+        //});
+        LoadVideo();
+
+        function LoadVideo() {
+            $.ajax({
+                type: "POST",
+                datatype: JSON,
+                url: '@(Url.Action("GetAll", "Video"))',
+                success: function (result) {
+                    var videoId = "";
+                    var videoUrl = "";
+                    var videoTitle = "";
+                    for (var i = 0; i < result.length; i++) {
+                        videoTitle = result[i].Title;
+                        videoUrl = result[i].VideoUrl;
+                        videoId = videoUrl.substring(videoUrl.indexOf('=') + 1);
+                        //$("#video-gallery").append("<a class='poster-container' href='" + videoUrl + "' ><img src='https://img.youtube.com/vi/" + videoId + "/mqdefault.jpg' class='img-thumb' /><img class='img-play-icon' src='/Content/images/play-button.png'></a>");
+                        $("#video-gallery").append("<div class='poster-container' data-src='" + videoUrl + "'>"
+                            + "<img src='https://img.youtube.com/vi/" + videoId + "/mqdefault.jpg' class='img-thumb'>"
+                            + "<img class='img-play-icon' src='/Content/images/play-button.png'>"
+                            + "<span>" + videoTitle + "</span>"
+                            + "</div>");
+                    }
+
+                    $lg.lightGallery({
+                        loadYoutubeThumbnail: true,
+                        youtubeThumbSize: 'default',
+                        selector: '.poster-container'
+                    });
+                },
+                error: function (a, textStatus, errorThrown) {
+                    printNotification("danger", errorThrown);
+                }
+            });
+        }
+    </script>
+}
+    
+<h2>All Video</h2>
+<hr />
+<form id="formAllVideo" class="form-horizontal">
+    <div class="row">
+        <div id="video-gallery">
+
+        </div>        
+    </div>
+</form>

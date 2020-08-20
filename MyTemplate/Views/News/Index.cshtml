@@ -1,0 +1,25 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>THÊM NỘI DUNG</title>
+</head>
+<body>
+    <div id="editor">
+        <p>This is the editor content.</p>
+    </div>
+    <script src="~/Assets/ckeditor/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace('editor', {
+            filebrowserBrowseUrl: '/Assets/ckfinder/ckfinder.html',
+            filebrowserUploadUrl: '/Assets/ckfinder/connector?command=QuickUpload&type=Files'
+        });
+    </script>
+</body>
+</html>

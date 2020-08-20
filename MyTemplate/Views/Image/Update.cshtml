@@ -1,0 +1,117 @@
+﻿@model MyTemplate.Models.Image
+@{
+    ViewBag.Title = "SỬA HÌNH ẢNH";
+}
+
+@section scripts{
+    <script type="text/javascript">
+    function btnHuy_Click() {
+        location.href = "/Image/Index";
+    }
+
+    function btnOpenUploadWindow_Click() {
+        $('#divPopup').modal('show');
+    }
+
+    function btnUploadImage_Click() {
+
+        var files = $("#file").get(0).files;
+        var fileData = new FormData();
+
+        if (files.length == 0) return false;
+
+        for (var i = 0; i < files.length; i++) {
+            fileData.append("file", files[i]);
+        }
+
+        $.ajax({
+            type: "POST",
+            url: '@(Url.Action("ProcessUploadImage", "Image"))',
+            contentType: false, // Not to set any content header
+            processData: false,
+            data: fileData,
+            success: function (result) {
+                $("#txtImageUrl").val(result);
+                $('#divPopup').modal('hide');
+            },
+            error: function (a, textStatus, errorThrown) {
+
+            }
+        });
+    }
+    </script>
+}
+
+
+@using (Html.BeginForm("Update", "Image", FormMethod.Post))
+{
+    <div class="row">
+        <div class="form-group col-md-12">
+            <label class="control-label">
+                Tiêu đề ảnh
+            </label>
+            @*<input id="txtTitle" name="Title" class="form-control" />*@
+            @Html.TextBoxFor(x => x.Title, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-12">
+            <label class="control-label">
+                Đường dẫn ảnh
+            </label>
+            @Html.TextBoxFor(x => x.ImageUrl, new { @class = "form-control", @required = "required", @oninvalid = "this.setCustomValidity('Đường dẫn ảnh không được để trống')", @oninput = "this.setCustomValidity('')" })
+            @*<input id="txtImageUrl" name="ImageUrl" class="form-control" required oninvalid="this.setCustomValidity('Đường dẫn ảnh không được để trống')" oninput="this.setCustomValidity('')" />*@
+            <button type="button" id="btnOpenUploadWindow" onclick="btnOpenUploadWindow_Click()" class="btn btn-success">Upload Hình</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-12">
+            <label class="control-label">
+                Album
+            </label>
+            @*@Html.DropDownList("ImageAlbumId", new SelectList(ViewBag.ImageAlbums, "Id", "Title", ""), new { @class = "form-control" })*@
+            @Html.DropDownListFor(x => x.ImageAlbumId, new SelectList(ViewBag.ImageAlbums, "Id", "Title", ""), new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <button type="button" id="btnHuy" onclick="btnHuy_Click()" class="btn btn-default">Hủy</button>
+            <button type="submit" id="btnLuu" class="btn btn-success">Lưu</button>
+        </div>
+    </div>
+}
+
+<form id="formUploadImage">
+    <div id="divPopup" class="modal fade" role="dialog" data-backdrop="static">
+        <div class="modal-dialog vertical-align-center">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                    </button>
+                    <span class="modal-title" id="TitlePopup"><b>UPLOAD HÌNH ẢNH</b></span>
+                </div>
+
+                <div id="divPopupBody" class="modal-body">
+
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label class="control-label">
+                                File
+                            </label>
+                            <input type="file" id="file" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="button" id="btnSubmit" onclick="btnUploadImage_Click()" class="btn btn-primary">Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
